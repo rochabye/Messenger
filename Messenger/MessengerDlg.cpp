@@ -58,12 +58,16 @@ CMessengerDlg::CMessengerDlg(CWnd* pParent /*=nullptr*/)
 void CMessengerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_CHAT_LIST, m_chat_list);
+	DDX_Control(pDX, IDC_EDIT_CHAT, m_edit_chat);
 }
 
 BEGIN_MESSAGE_MAP(CMessengerDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_LBN_SELCHANGE(IDC_CHAT_LIST, &CMessengerDlg::OnLbnSelchangeList1)
+	ON_BN_CLICKED(IDC_INPUT_BTN, &CMessengerDlg::OnBnClickedInputBtn)
 END_MESSAGE_MAP()
 
 
@@ -152,3 +156,18 @@ HCURSOR CMessengerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CMessengerDlg::OnLbnSelchangeList1()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+void CMessengerDlg::OnBnClickedInputBtn()
+{
+	CString str;
+	GetDlgItemText(IDC_EDIT_CHAT, str);
+	m_chat_list.AddString(str);
+	SetDlgItemText(IDC_EDIT_CHAT, L"");
+	m_edit_chat.SetFocus();
+}

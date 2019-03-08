@@ -31,4 +31,10 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLbnSelchangeList1();
+	CListBox m_chat_list;
+	afx_msg void OnBnClickedInputBtn();
+private:
+	CEdit m_edit_chat;
 };
