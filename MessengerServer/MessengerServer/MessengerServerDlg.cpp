@@ -25,10 +25,6 @@ public:
 
 protected:
 	DECLARE_MESSAGE_MAP()
-public:
-protected:
-public:
-//	afx_msg void OnDestroy();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -41,9 +37,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-//	ON_WM_ACTIVATE()
-//ON_MESSAGE(WM_DESTROY, &CAboutDlg::OnDestroy)
-//ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -111,7 +104,6 @@ BOOL CMessengerServerDlg::OnInitDialog()
 	AddEventString("service start.");
 	listen(mh_listen_socket, 1);
 
-	//WSAAsyncSelect(mh_listen_socket, m_hWnd, 25001, FD_ACCEPT); 
 	WSAAsyncSelect(mh_listen_socket, m_hWnd, 25001, FD_ACCEPT);
 	return TRUE; 
 }
