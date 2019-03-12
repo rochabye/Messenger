@@ -97,6 +97,10 @@ BOOL CMessengerServerDlg::OnInitDialog()
 	mh_listen_socket = socket(AF_INET, SOCK_STREAM, 0);
 	// AF_INET : internet basic TCP address. 
 
+	for (int i = 0; i < MAX_USER_COUNT; ++i) {
+		m_user_list[i].h_socket = INVALID_SOCKET;
+	}
+
 	sockaddr_in srv_addr;
 	srv_addr.sin_family = AF_INET;
 	srv_addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);// inet_addr("10.103.196.181");
@@ -108,7 +112,7 @@ BOOL CMessengerServerDlg::OnInitDialog()
 	listen(mh_listen_socket, 1);
 
 	//WSAAsyncSelect(mh_listen_socket, m_hWnd, 25001, FD_ACCEPT); 
-	WSAEventSelect(mh_listen_socket, m_hWnd, 25001);
+	WSAAsyncSelect(mh_listen_socket, m_hWnd, 25001, FD_ACCEPT);
 	return TRUE; 
 }
 
@@ -172,16 +176,20 @@ afx_msg LRESULT CMessengerServerDlg::On25001(WPARAM wParam, LPARAM lParam)
 	// mh_listen_socket = wparam
 	// client_addr = client ip
 	// h_socket = clone socket. listen socket copy
-
+	CString log;
+	
 	int index;
 	for (index = 0; index < MAX_USER_COUNT; ++index) { // search empty 
 		if (m_user_list[index].h_socket == INVALID_SOCKET) break;
 	}
+	log.Format("index : %d", index);
+	AddEventString(log);
+
 	if (index < MAX_USER_COUNT) {
 		m_user_list[index].h_socket = h_socket;
 		strcpy_s(m_user_list[index].ip_address, inet_ntoa(client_addr.sin_addr));
 		// client address copy 
-		WSAEventSelect(m_user_list[index].h_socket, m_hWnd, 25002);
+		WSAAsyncSelect(m_user_list[index].h_socket, m_hWnd, 25002, FD_READ | FD_CLOSE );
 		CString str;
 		str.Format("%s에서 접속했습니다.", m_user_list[index].ip_address);
 	}
@@ -199,7 +207,7 @@ afx_msg LRESULT CMessengerServerDlg::On25002(WPARAM wParam, LPARAM lParam)
 	
 	CString str;
 	if (WSAGETSELECTEVENT(lParam) == FD_READ) {
-		WSAEventSelect(wParam, m_hWnd, 25002);
+		WSAAsyncSelect(wParam, m_hWnd, 25002, FD_CLOSE);
 		char key;
 		recv(wParam, &key, 1, 0);
 		if (key == 27) {
@@ -242,7 +250,7 @@ afx_msg LRESULT CMessengerServerDlg::On25002(WPARAM wParam, LPARAM lParam)
 
 		
 			if (p_body_data != NULL) delete[] p_body_data;
-			WSAEventSelect(wParam, m_hWnd, 25002);
+			WSAAsyncSelect(wParam, m_hWnd, 25002, FD_READ | FD_CLOSE );
 		}
 		else { // fd_close 
 			closesocket(wParam);

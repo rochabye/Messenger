@@ -1,6 +1,4 @@
 ﻿
-// MessengerClientDlg.cpp: 구현 파일
-//
 
 #include "stdafx.h"
 #include "MessengerClient.h"
@@ -11,23 +9,18 @@
 #define new DEBUG_NEW
 #endif
 
-
-// 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
-
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
 
-// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
+	virtual void DoDataExchange(CDataExchange* pDX);
 
-// 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -43,10 +36,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
-
-
-// CMessengerClientDlg 대화 상자
-
 
 
 CMessengerClientDlg::CMessengerClientDlg(CWnd* pParent /*=nullptr*/)
@@ -100,7 +89,7 @@ BOOL CMessengerClientDlg::OnInitDialog()
 	srv_addr.sin_family = AF_INET;
 	srv_addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	srv_addr.sin_port = htons(18000);
-	WSAEventSelect(mh_socket, m_hWnd, 25001);
+	WSAAsyncSelect(mh_socket, m_hWnd, 25001, FD_CONNECT);
 	m_connect_flag = SOCKET_CONNECTING;
 
 	AddEventString("서버에 접속을 시도합니다");
@@ -122,19 +111,14 @@ void CMessengerClientDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면
-//  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 응용 프로그램의 경우에는
-//  프레임워크에서 이 작업을 자동으로 수행합니다.
-
 void CMessengerClientDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+		CPaintDC dc(this); 
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -142,7 +126,6 @@ void CMessengerClientDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// 아이콘을 그립니다.
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -151,8 +134,6 @@ void CMessengerClientDlg::OnPaint()
 	}
 }
 
-// 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
-//  이 함수를 호출합니다.
 HCURSOR CMessengerClientDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -195,7 +176,7 @@ afx_msg LRESULT CMessengerClientDlg::On25001(WPARAM wParam, LPARAM lParam)
 	}
 	else {
 		m_connect_flag = SOCKET_CONNECTED;
-		WSAEventSelect(mh_socket, m_hWnd, 25002);
+		WSAAsyncSelect(mh_socket, m_hWnd, 25002, FD_READ | FD_CLOSE);
 		AddEventString("서버에 접속했습니다");
 
 	}
@@ -207,7 +188,7 @@ afx_msg LRESULT CMessengerClientDlg::On25002(WPARAM wParam, LPARAM lParam)
 {
 	CString str;
 	if (WSAGETSELECTEVENT(lParam) == FD_READ) {
-		WSAEventSelect(wParam, m_hWnd, 25002);
+		WSAAsyncSelect(wParam, m_hWnd, 2002, FD_CLOSE);
 		char key;
 		recv(wParam, &key, 1, 0);
 		if (key == 27) {
@@ -236,7 +217,7 @@ afx_msg LRESULT CMessengerClientDlg::On25002(WPARAM wParam, LPARAM lParam)
 			}
 			if (p_body_data != NULL) delete[] p_body_data;
 
-			WSAEventSelect(wParam, m_hWnd, 25002);
+			WSAAsyncSelect(wParam, m_hWnd, 25002, FD_READ | FD_CLOSE);
 		}
 	}
 	else {
