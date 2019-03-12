@@ -7,15 +7,12 @@
 
 #include "resource.h"
 
-
 class CMessengerServerApp : public CWinApp
 {
 public:
 	CMessengerServerApp();
-
 public:
 	virtual BOOL InitInstance();
-
 	DECLARE_MESSAGE_MAP()
 };
 

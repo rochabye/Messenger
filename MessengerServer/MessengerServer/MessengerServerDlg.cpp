@@ -192,6 +192,8 @@ afx_msg LRESULT CMessengerServerDlg::On25001(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+// message struct : 
+// | key (1byte) | message_id (1byte) | body_size (2byte) | .... data .... |
 
 afx_msg LRESULT CMessengerServerDlg::On25002(WPARAM wParam, LPARAM lParam)
 {
@@ -202,7 +204,7 @@ afx_msg LRESULT CMessengerServerDlg::On25002(WPARAM wParam, LPARAM lParam)
 		WSAAsyncSelect(wParam, m_hWnd, 25002, FD_CLOSE);
 		char key;
 		recv(wParam, &key, 1, 0);
-		if (key == 27) {
+		if (key == MSG_KEY) {
 			char message_id;
 			recv(wParam, &message_id, 1, 0);
 
@@ -276,7 +278,7 @@ void CMessengerServerDlg::SendFrameData(SOCKET ah_socket, char a_message_id,
 	unsigned short int a_body_size, char* ap_send_data)
 {
 	char *p_send_data = new char[4 + a_body_size];
-	*p_send_data = 27;
+	*p_send_data = MSG_KEY;
 	*(p_send_data + 1) = a_message_id;
 	*(unsigned short *)(p_send_data + 2) = a_body_size;
 

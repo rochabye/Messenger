@@ -1,6 +1,8 @@
 ﻿
 #pragma once
 
+#define MSG_KEY 27
+
 class CMessengerClientDlg : public CDialogEx
 {
 public:

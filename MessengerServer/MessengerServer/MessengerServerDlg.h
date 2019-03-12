@@ -9,6 +9,7 @@ struct UserData {
 };
 
 #define MAX_USER_COUNT 100
+#define MSG_KEY 27
 
 class CMessengerServerDlg : public CDialogEx
 {
