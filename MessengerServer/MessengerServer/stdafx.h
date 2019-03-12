@@ -16,10 +16,10 @@
 // MFC의 공통 부분과 무시 가능한 경고 메시지에 대한 숨기기를 해제합니다.
 #define _AFX_ALL_WARNINGS
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <afxwin.h>         // MFC 핵심 및 표준 구성 요소입니다.
 #include <afxext.h>         // MFC 확장입니다.
-
-
+#include <WinSock2.h> // win socket 
 #include <afxdisp.h>        // MFC 자동화 클래스입니다.
 
 
@@ -32,9 +32,6 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC의 리본 및 컨트롤 막대 지원
-
-
-#include <afxsock.h>            // MFC 소켓 확장
 
 
 
