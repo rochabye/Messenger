@@ -272,3 +272,16 @@ void CMessengerServerDlg::OnDestroy()
 		}
 	}
 }
+void CMessengerServerDlg::SendFrameData(SOCKET ah_socket, char a_message_id,
+	unsigned short int a_body_size, char* ap_send_data)
+{
+	char *p_send_data = new char[4 + a_body_size];
+	*p_send_data = 27;
+	*(p_send_data + 1) = a_message_id;
+	*(unsigned short *)(p_send_data + 2) = a_body_size;
+
+
+	memcpy(p_send_data + 4, ap_send_data, a_body_size);
+	send(ah_socket, p_send_data, a_body_size + 4, 0);
+	delete[] p_send_data;
+}

@@ -17,13 +17,12 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MESSENGERSERVER_DIALOG };
 #endif
-
+	void SendFrameData(SOCKET ah_socket, char a_message_id, unsigned short int a_body_size, char* ap_send_data);
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	void AddEventString(const char *ap_string);
 
-	void SendFrameData(SOCKET ah_socket, char a_message_id,
-		unsigned short int a_body_size, char* ap_send_data);
+	
 protected:
 	HICON m_hIcon;
 
